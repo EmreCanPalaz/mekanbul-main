@@ -3,6 +3,7 @@ import React from "react";
 import { useLocation, useParams,useNavigate} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import VenueDataService from "../services/VenueDataService";
+import Modal from "./Modal";
 function AddComment() {
   let location = useLocation();
   const {id}=useParams();
@@ -20,12 +21,20 @@ function AddComment() {
         }
         VenueDataService.addComment(id, newComment).then(function(){
           dispatch({ type: "ADD_COMMENT" });
-          //setShowModal(true);
-          navigate("/venue/"+id);
+          setShowModal(true);
+          //navigate("/venue/"+id);
+        }).catch(()=>{
+          dispatch({type: "ADD_COMMENT_FAILURE"});
         });
     }
   };
+  const handleModalClose=()=>{
+    setShowModal(false);
+    navigate('/venue/'+id);
+  };
+  
     return (
+      
       <>
         <Header headerText={location.state.name} motto=" mekanına yorum yap" />
         <div className="row">
@@ -55,6 +64,7 @@ function AddComment() {
                     id="rating"
                     name="rating"
                   >
+                    
                     <option>5</option>
                     <option>4</option>
                     <option>3</option>
@@ -63,6 +73,7 @@ function AddComment() {
                   </select>
                 </div>
               </div>
+       
               <div className="form-group">
                 <label className="col-sm-2 control-label">Yorum:</label>
                 <div className="col-sm-10">
@@ -73,11 +84,22 @@ function AddComment() {
                   />
                 </div>
               </div>
+              
               <button className="btn btn-default pull-right">Yorum Ekle</button>
             </form>
           </div>
         </div>
+              <Modal
+              show={showModal}
+              onClose={handleModalClose}
+              title="Tebrikler"
+              message="Yorumunuz başarıyla alındı"
+              />
+              
+              
+        
       </>
+      
     );
 }
 export default AddComment;

@@ -13,8 +13,11 @@ const VenueDetail = () => {
   const dispatch = useDispatch();
   const venue = useSelector((state) => state.data);
   React.useEffect(() => {
+    dispatch({type: "FETCH_INIT" });
     VenueDataService.getVenue(id).then((response) => {
       dispatch({ type: "FETCH_SUCCESS", payload: response.data });
+    }).catch(()=>{
+      dispatch({type: "FETCH_FAILURE"});
     });
   }, [id]);
   return (

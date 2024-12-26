@@ -1,7 +1,8 @@
+import React, { useState } from "react";
 import InputWithLabel from "./InputWithLabel";
 import VenueList from "./VenueList";
 import Header from "./Header";
-import React from "react";
+//import React from "react"; react 17 den sonra ayrıca importa gerek yokmuş
 import { useSelector, useDispatch } from "react-redux";
 import VenueDataService from "../services/VenueDataService";
 const Home = () => {
@@ -14,6 +15,16 @@ const Home = () => {
   const isError = useSelector((state) => state.isError);
   const isLoading = useSelector((state) => state.isLoading);
   const isSuccess = useSelector((state) => state.isSuccess);
+  const search =(event)=>{
+    setSearchVenue(event.target.value);
+  };
+  const[searchVenue,setSearchVenue]=useState("");
+  const filteredVenues=Array.isArray(venues)? venues.filter(
+    (venue)=>
+      venue.name.toLowerCase().includes(searchVenue.toLowerCase()) ||
+      venue.address.toLowerCase().includes(searchVenue.toLowerCase())
+): [];
+  
 
   React.useEffect(() => {
     if ("geolocation" in navigator) {
@@ -48,8 +59,8 @@ const Home = () => {
         label="Mekan Ara:"
         type="text"
         isFocused
-        onInputChange={() => null}
-        value={" "}
+        onInputChange={search}
+        value={searchVenue}
       />
       <hr />
       <div className="row">
@@ -58,7 +69,7 @@ const Home = () => {
         ) : isLoading ? (
           <p>Mekanlar Yükleniyor...</p>
         ) : (
-          isSuccess && <VenueList venues={venues ||[]} />
+          isSuccess && <VenueList venues={filteredVenues} />
         )}
       </div>
     </div>
